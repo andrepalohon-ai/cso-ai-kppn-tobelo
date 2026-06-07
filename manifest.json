@@ -1,0 +1,23 @@
+{
+  "name": "CSO KPPN Tobelo Digital",
+  "short_name": "CSO Tobelo",
+  "description": "Asisten Digital Satker KPPN Tobelo",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#1e3a8a",
+  "icons": [
+    {
+      "src": "Logo_CSO.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Logo_CSO.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
