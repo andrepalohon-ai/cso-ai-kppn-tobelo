@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSO KPPN Tobelo Mobile Assistant</title>
+    
+    <!-- PWA & Mobile Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="Logo_CSO.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .faq-card { transition: all 0.3s ease; }
+        .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .active .faq-content { max-height: 1000px; }
+        .active .chevron { transform: rotate(180deg); }
+        body { background-color: #f3f4f6; -webkit-tap-highlight-color: transparent; }
+        
+        .modal-enter-active { animation: modal-in 0.3s ease-out; }
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .avatar-cso { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
+    </style>
+</head>
+<body class="font-sans pb-28">
+
+    <!-- MODAL AGENDA BULANAN -->
+    <div id="monthlyModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-[100] items-center justify-center p-6">
+        <div id="modalContent" class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all">
+            <div class="bg-blue-700 p-5 text-white relative text-center border-b-4 border-yellow-400">
+                <h3 class="text-xs uppercase tracking-widest font-bold opacity-80">Agenda Penting</h3>
+                <h2 id="modalTitle" class="text-2xl font-bold italic underline underline-offset-4">Mei 2026</h2>
+            </div>
+            <div class="p-6">
+                <ul id="todoList" class="space-y-4"></ul>
+                <button onclick="closeMonthlyModal()" class="w-full mt-6 bg-blue-700 text-white py-4 rounded-xl font-black shadow-lg active:scale-95 transition-transform uppercase tracking-tighter">TUTUP & TANYA CSO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AI CHATBOT -->
+    <div id="aiModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-[100] items-end sm:items-center justify-center p-4">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="bg-gradient-to-r from-blue-900 to-blue-700 p-5 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="Logo_CSO.png" alt="CSO" class="avatar-cso bg-white">
+                    <div>
+                        <h2 class="font-bold leading-tight uppercase tracking-tighter">CSO Digital Tobelo</h2>
+                        <p class="text-[10px] text-blue-200 flex items-center gap-1">
+                            <span class="h-2 w-2 bg-green-400 rounded-full animate-pulse"></span> Online | Siap Membantu
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleAI()"><i class="fas fa-times text-lg"></i></button>
+            </div>
+            <div class="p-5 bg-gray-50 h-[380px] overflow-y-auto flex flex-col gap-3" id="chatWindow">
+                <div class="bg-blue-100 text-blue-800 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm leading-relaxed">
+                    Halo Bapak/Ibu Satker, saya CSO Digital KPPN Tobelo. Ada yang bisa saya bantu terkait kendala Aplikasi Perbendaharaan?
+                </div>
+            </div>
+            <div class="p-3 bg-white border-t flex gap-2">
+                <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') askAI()" placeholder="Tulis kendala..." class="flex-1 bg-gray-100 border-none rounded-full px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <button onclick="askAI()" class="bg-blue-700 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="bg-white p-6 rounded-b-[40px] shadow-lg sticky top-0 z-50 border-b-4 border-yellow-500">
+        <div class="flex justify-between items-center mb-5">
+            <img src="Logo_Handal_Oke.png" alt="DJPb" class="h-10 object-contain">
+            <div class="text-right flex items-center gap-2">
+                 <div class="h-8 w-[2px] bg-gray-300"></div>
+                 <span class="text-blue-900 font-black text-sm leading-tight uppercase tracking-tighter">KPPN<br>Tobelo</span>
+                 <img src="Logo_Kemenkeu.png" alt="Kemenkeu" class="h-10 object-contain">
+            </div>
+        </div>
+        <h1 class="text-xl font-black text-blue-900 uppercase tracking-tighter text-center">CSO KPPN TOBELO DIGITAL</h1>
+        <div class="mt-4 relative">
+            <i class="fas fa-search absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+            <input type="text" id="searchInput" onkeyup="filterFAQ()" placeholder="Cari masalah (SPM, OTP, LPJ)..." 
+            class="w-full pl-11 pr-4 py-3 rounded-2xl text-gray-800 bg-gray-100 focus:outline-none focus:ring-4 focus:ring-blue-200 shadow-inner font-semibold">
+        </div>
+    </header>
+
+    <!-- KATEGORI (MANUAL) -->
+    <div id="categoryContainer" class="flex gap-2 overflow-x-auto p-4 no-scrollbar border-b border-gray-100 bg-white shadow-sm sticky top-[185px] z-40"></div>
+
+    <!-- LIST FAQ -->
+    <main id="faqContainer" class="px-4 space-y-4 mt-4"></main>
+
+    <!-- FAB BUTTONS -->
+    <button onclick="openMonthlyModal()" class="fixed bottom-8 left-6 bg-blue-700 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center z-[90] border-4 border-white active:scale-90 transition-transform">
+        <i class="fas fa-calendar-alt text-xl"></i>
+    </button>
+
+    <button onclick="toggleAI()" class="fixed bottom-8 right-6 bg-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center z-[90] border-4 border-blue-700 active:scale-95 transition-transform overflow-hidden ring-4 ring-white">
+        <img src="Logo_CSO.png" alt="CSO" class="w-full h-full object-cover scale-110 bg-white">
+        <span class="absolute top-1 right-1 h-4 w-4 bg-green-500 border-2 border-white rounded-full animate-pulse"></span>
+    </button>
+
+    <script>
+        // 1. DAFTAR KATEGORI MANUAL
+        const LIST_KATEGORI_MANUAL = ["Semua", "SAKTI", "Pembayaran", "Supplier", "Kontrak", "Bendahara", "Pelaporan", "Gaji", "Aset", "Pajak", "Hibah"];
+
+        // 2. AGENDA BULANAN
+        const AGENDA_BULANAN = {
+            bulan: "Mei 2026",
+            items: [
+                { tgl: "08", tugas: "Batas Akhir Capaian Output Mei" },
+                { tgl: "10", tugas: "Batas Akhir Penyampaian LPJ Bendahara Mei" },
+                { tgl: "15", tugas: "Batas Akhir Penyampaian SPM Gaji Induk Juli 2026" },
+                { tgl: "22", tugas: "Penyampaian SPM PPNPN Induk Mei 2026" }
+            ]
+        };
+
+        // 3. DATABASE FAQ
+        const dataFaq = [
+            { cat: "SAKTI", q: "Kenapa OTP SAKTI tidak kunjung masuk?", a: "Kendala jaringan operator atau nomor belum aktif di SAKTI.", solusi: "1. Restart HP.\n2. Cek pulsa min Rp5rb.\n3. Cek pendaftaran nomor di Modul Admin." },
+            { cat: "Pembayaran", q: "Status SPP-SPM: 'Upload NTT'", a: "Berarti PPK sudah selesai melakukan OTP SPP.", solusi: "Operator harus ke menu Cetak SPM dan klik 'Cetak' agar status berubah menjadi 'Setuju SPM'." },
+            { cat: "Pelaporan", q: "Solusi Rekon Gagal?", a: "Terdapat perbedaan data saldo antara SAKTI dan SPAN.", solusi: "Cek detail di MyIntress dan pastikan semua transaksi sudah diposting di Buku Besar SAKTI." },
+            { cat: "Supplier", q: "Supplier Gagal karena Rekening Tidak Aktif?", a: "Rekening supplier yang didaftarkan sudah pasif.", solusi: "Minta supplier memberikan surat keterangan bank terbaru dan lakukan perubahan supplier di SAKTI." },
+            { cat: "Gaji", q: "Batas kirim gaji induk?", a: "Paling lambat tanggal 15 bulan sebelumnya.", solusi: "Selesaikan perubahan data gaji sebelum tanggal 10 agar ADK Gaji bisa dikirim tepat waktu." }
+        ];
+
+        function renderManualCategories() {
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = LIST_KATEGORI_MANUAL.map(cat => `
+                <button onclick="filterCategory('${cat}', this)" 
+                        class="cat-btn px-6 py-2 rounded-full text-xs font-black whitespace-nowrap uppercase border transition-all tracking-wider
+                        ${cat === 'Semua' ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white text-gray-600 border-gray-100 shadow-sm'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function displayFaq(items) {
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = items.length ? '' : '<div class="text-center py-20 opacity-30 italic font-bold">Informasi belum tersedia...</div>';
+            
+            items.forEach((item, i) => {
+                container.innerHTML += `
+                    <div class="faq-item bg-white rounded-3xl shadow-md border-b-4 border-gray-200 overflow-hidden faq-card">
+                        <div onclick="toggleFaq(${i})" class="p-5 flex justify-between items-center cursor-pointer active:bg-blue-50 transition-colors">
+                            <div class="pr-4">
+                                <span class="text-[9px] font-black uppercase px-2 py-1 bg-yellow-100 text-yellow-700 rounded-lg tracking-widest">${item.cat}</span>
+                                <h3 class="text-base font-bold text-gray-800 mt-2 leading-tight">${item.q}</h3>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400 chevron transition-transform text-sm"></i>
+                        </div>
+                        <div class="faq-content bg-gray-50 border-t border-dashed">
+                            <div class="p-6">
+                                <p class="text-sm text-gray-500 mb-4 italic leading-relaxed">"${item.a}"</p>
+                                <div class="p-5 bg-gradient-to-br from-blue-700 to-blue-900 text-white rounded-2xl border-l-8 border-yellow-400 shadow-inner">
+                                    <h4 class="text-[10px] font-black uppercase mb-2 text-yellow-300 tracking-wider underline underline-offset-4">Solusi Utama:</h4>
+                                    <p class="text-lg font-bold leading-tight whitespace-pre-line">${item.solusi}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleFaq(i) {
+            const items = document.querySelectorAll('.faq-item');
+            const isActive = items[i].classList.contains('active');
+            items.forEach(it => it.classList.remove('active'));
+            if(!isActive) items[i].classList.add('active');
+        }
+
+        function openMonthlyModal() {
+            const list = document.getElementById('todoList');
+            document.getElementById('modalTitle').innerText = AGENDA_BULANAN.bulan;
+            list.innerHTML = AGENDA_BULANAN.items.map(it => `
+                <li class="flex items-center gap-4 bg-gray-50 p-3 rounded-xl border-l-4 border-blue-600">
+                    <span class="font-black text-blue-700 text-xl min-w-[40px]">#${it.tgl}</span>
+                    <span class="text-sm font-bold text-gray-700 leading-tight">${it.tugas}</span>
+                </li>
+            `).join('');
+            document.getElementById('monthlyModal').classList.replace('hidden', 'flex');
+        }
+
+        function closeMonthlyModal() {
+            document.getElementById('monthlyModal').classList.replace('flex', 'hidden');
+            setTimeout(() => {
+                const ai = document.getElementById('aiModal');
+                ai.classList.replace('hidden', 'flex');
+                
+                const win = document.getElementById('chatWindow');
+                if (win.children.length === 1) {
+                    setTimeout(() => {
+                        win.innerHTML += `<div class="bg-white border text-gray-800 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm animate-pulse italic">Ada kendala spesifik yang ingin ditanyakan, Bapak/Ibu? 😊</div>`;
+                        win.scrollTop = win.scrollHeight;
+                    }, 800);
+                }
+            }, 600);
+        }
+
+        function toggleAI() {
+            const m = document.getElementById('aiModal');
+            m.classList.toggle('hidden');
+            m.classList.toggle('flex');
+        }
+
+        function filterCategory(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
+                b.classList.add('bg-white', 'text-gray-600', 'border-gray-100', 'shadow-sm');
+            });
+            btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
+            btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-100', 'shadow-sm');
+            const filtered = cat === 'Semua' ? dataFaq : dataFaq.filter(f => f.cat === cat);
+            displayFaq(filtered);
+        }
+
+        function filterFAQ() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            displayFaq(dataFaq.filter(f => f.q.toLowerCase().includes(q) || f.solusi.toLowerCase().includes(q)));
+        }
+
+        function askAI() {
+            const input = document.getElementById('aiInput');
+            const win = document.getElementById('chatWindow');
+            if(!input.value.trim()) return;
+            win.innerHTML += `<div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none text-sm self-end max-w-[85%] shadow-md">${input.value}</div>`;
+            const query = input.value.toLowerCase();
+            input.value = '';
+            win.scrollTop = win.scrollHeight;
+            setTimeout(() => {
+                let match = dataFaq.find(f => query.split(' ').some(w => f.q.toLowerCase().includes(w) && w.length > 3));
+                let response = match 
+                    ? `Bapak/Ibu Satker, terkait <b>${match.q}</b>, <br><br>👉 <b>Solusinya adalah:</b> <br>${match.solusi.replace(/\n/g, '<br>')}`
+                    : "Mohon maaf Bapak/Ibu, saya tidak menemukan jawaban otomatis. Silakan hubungi CSO KPPN Tobelo via WA/Telepon.";
+                win.innerHTML += `<div class="bg-white border text-gray-800 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm">${response}</div>`;
+                win.scrollTop = win.scrollHeight;
+            }, 600);
+        }
+
+        window.onload = () => {
+            renderManualCategories();
+            displayFaq(dataFaq);
+            setTimeout(openMonthlyModal, 1500);
+        };
+
+        // PENDAFTARAN SERVICE WORKER (PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Registration Failed'));
+            });
+        }
+    </script>
+</body>
+</html>
