@@ -43,7 +43,7 @@
             </div>
             <div class="p-6">
                 <ul id="todoList" class="space-y-4"></ul>
-                <button onclick="closeMonthlyModal()" class="w-full mt-6 bg-blue-700 text-white py-4 rounded-xl font-black shadow-lg active:scale-95 transition-transform uppercase tracking-tighter">TUTUP & TANYA CSO</button>
+                <button onclick="closeMonthlyModal()" class="w-full mt-6 bg-blue-700 text-white py-4 rounded-xl font-black shadow-lg active:scale-95 transition-transform uppercase tracking-tighter text-sm">TUTUP & TANYA CSO</button>
             </div>
         </div>
     </div>
@@ -53,23 +53,23 @@
         <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md overflow-hidden shadow-2xl">
             <div class="bg-gradient-to-r from-blue-900 to-blue-700 p-5 text-white flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <img src="Logo_CSO.png" alt="CSO" class="avatar-cso bg-white">
+                    <img src="Logo_CSO.png" alt="CSO" class="avatar-cso bg-white border-none shadow-md">
                     <div>
                         <h2 class="font-bold leading-tight uppercase tracking-tighter">CSO Digital Tobelo</h2>
-                        <p class="text-[10px] text-blue-200 flex items-center gap-1">
+                        <p class="text-[10px] text-blue-200 flex items-center gap-1 font-medium">
                             <span class="h-2 w-2 bg-green-400 rounded-full animate-pulse"></span> Online | Siap Membantu
                         </p>
                     </div>
                 </div>
                 <button onclick="toggleAI()"><i class="fas fa-times text-lg"></i></button>
             </div>
-            <div class="p-5 bg-gray-50 h-[380px] overflow-y-auto flex flex-col gap-3" id="chatWindow">
-                <div class="bg-blue-100 text-blue-800 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm leading-relaxed">
-                    Halo Bapak/Ibu Satker, saya CSO Digital KPPN Tobelo. Ada yang bisa saya bantu terkait kendala Aplikasi Perbendaharaan?
+            <div class="p-5 bg-gray-50 h-[380px] overflow-y-auto flex flex-col gap-3 shadow-inner" id="chatWindow">
+                <div class="bg-blue-100 text-blue-800 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm leading-relaxed border border-blue-200">
+                    Halo Bapak/Ibu Satker, saya CSO Digital KPPN Tobelo. Ada yang bisa saya bantu terkait kendala Aplikasi atau administrasi Perbendaharaan?
                 </div>
             </div>
             <div class="p-3 bg-white border-t flex gap-2">
-                <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') askAI()" placeholder="Tulis kendala..." class="flex-1 bg-gray-100 border-none rounded-full px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') askAI()" placeholder="Tulis kendala..." class="flex-1 bg-gray-100 border-none rounded-full px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none font-medium">
                 <button onclick="askAI()" class="bg-blue-700 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
@@ -110,10 +110,9 @@
     </button>
 
     <script>
-        // 1. DAFTAR KATEGORI MANUAL
+        // 1. KONFIGURASI
         const LIST_KATEGORI_MANUAL = ["Semua", "SAKTI", "Pembayaran", "Supplier", "Kontrak", "Bendahara", "Pelaporan", "Gaji", "Aset", "Pajak", "Hibah"];
 
-        // 2. AGENDA BULANAN
         const AGENDA_BULANAN = {
             bulan: "Mei 2026",
             items: [
@@ -124,15 +123,35 @@
             ]
         };
 
-        // 3. DATABASE FAQ
         const dataFaq = [
-            { cat: "SAKTI", q: "Kenapa OTP SAKTI tidak kunjung masuk?", a: "Kendala jaringan operator atau nomor belum aktif di SAKTI.", solusi: "1. Restart HP.\n2. Cek pulsa min Rp5rb.\n3. Cek pendaftaran nomor di Modul Admin." },
+            { cat: "SAKTI", q: "Kenapa OTP SAKTI tidak kunjung masuk?", a: "Kendala jaringan operator atau nomor belum aktif di SAKTI.", solusi: "1. Restart HP.\n2. Cek masa aktif nomor HP.\n3. Cek pendaftaran nomor di Modul Admin SAKTI pastikan sesuai." },
             { cat: "Pembayaran", q: "Status SPP-SPM: 'Upload NTT'", a: "Berarti PPK sudah selesai melakukan OTP SPP.", solusi: "Operator harus ke menu Cetak SPM dan klik 'Cetak' agar status berubah menjadi 'Setuju SPM'." },
             { cat: "Pelaporan", q: "Solusi Rekon Gagal?", a: "Terdapat perbedaan data saldo antara SAKTI dan SPAN.", solusi: "Cek detail di MyIntress dan pastikan semua transaksi sudah diposting di Buku Besar SAKTI." },
             { cat: "Supplier", q: "Supplier Gagal karena Rekening Tidak Aktif?", a: "Rekening supplier yang didaftarkan sudah pasif.", solusi: "Minta supplier memberikan surat keterangan bank terbaru dan lakukan perubahan supplier di SAKTI." },
             { cat: "Gaji", q: "Batas kirim gaji induk?", a: "Paling lambat tanggal 15 bulan sebelumnya.", solusi: "Selesaikan perubahan data gaji sebelum tanggal 10 dan SPM Gaji Induk sebelum tanggal 15 setiap bulannya." }
         ];
 
+        // 2. FUNGSI GOOGLE CALENDAR
+        function getMonthNumber(monthName) {
+            const months = { "Januari": "01", "Februari": "02", "Maret": "03", "April": "04", "Mei": "05", "Juni": "06", "Juli": "07", "Agustus": "08", "September": "09", "Oktober": "10", "November": "11", "Desember": "12" };
+            return months[monthName] || "01";
+        }
+
+        function generateGoogleCalendarUrl(tgl, tugas) {
+            const bulanTahun = AGENDA_BULANAN.bulan.split(" ");
+            const bulan = getMonthNumber(bulanTahun[0]);
+            const tahun = bulanTahun[1];
+            const dateStr = `${tahun}${bulan}${tgl.padStart(2, '0')}`;
+            
+            const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
+            const text = encodeURIComponent(`[DEADLINE KPPN] ${tugas}`);
+            const dates = `${dateStr}T080000/${dateStr}T160000`; // Jam 08:00 - 16:00
+            const details = encodeURIComponent("Ingat Batas Akhir Layanan Perbendaharaan KPPN Tobelo. Harap selesaikan kewajiban Anda tepat waktu.");
+            
+            return `${baseUrl}&text=${text}&dates=${dates}&details=${details}&location=KPPN+Tobelo&sf=true&output=xml`;
+        }
+
+        // 3. FUNGSI UI
         function renderManualCategories() {
             const container = document.getElementById('categoryContainer');
             container.innerHTML = LIST_KATEGORI_MANUAL.map(cat => `
@@ -147,7 +166,6 @@
         function displayFaq(items) {
             const container = document.getElementById('faqContainer');
             container.innerHTML = items.length ? '' : '<div class="text-center py-20 opacity-30 italic font-bold">Informasi belum tersedia...</div>';
-            
             items.forEach((item, i) => {
                 container.innerHTML += `
                     <div class="faq-item bg-white rounded-3xl shadow-md border-b-4 border-gray-200 overflow-hidden faq-card">
@@ -183,9 +201,15 @@
             const list = document.getElementById('todoList');
             document.getElementById('modalTitle').innerText = AGENDA_BULANAN.bulan;
             list.innerHTML = AGENDA_BULANAN.items.map(it => `
-                <li class="flex items-center gap-4 bg-gray-50 p-3 rounded-xl border-l-4 border-blue-600">
-                    <span class="font-black text-blue-700 text-xl min-w-[40px]">#${it.tgl}</span>
-                    <span class="text-sm font-bold text-gray-700 leading-tight">${it.tugas}</span>
+                <li class="flex items-center justify-between bg-gray-50 p-3 rounded-xl border-l-4 border-blue-600 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-blue-700 text-xl min-w-[35px]">#${it.tgl}</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">${it.tugas}</span>
+                    </div>
+                    <a href="${generateGoogleCalendarUrl(it.tgl, it.tugas)}" target="_blank" 
+                       class="ml-2 bg-white p-2 rounded-full shadow-sm border border-gray-100 text-blue-600 active:scale-75 transition-all">
+                        <i class="fab fa-google text-xs"></i>
+                    </a>
                 </li>
             `).join('');
             document.getElementById('monthlyModal').classList.replace('hidden', 'flex');
@@ -196,7 +220,6 @@
             setTimeout(() => {
                 const ai = document.getElementById('aiModal');
                 ai.classList.replace('hidden', 'flex');
-                
                 const win = document.getElementById('chatWindow');
                 if (win.children.length === 1) {
                     setTimeout(() => {
@@ -233,7 +256,7 @@
             const input = document.getElementById('aiInput');
             const win = document.getElementById('chatWindow');
             if(!input.value.trim()) return;
-            win.innerHTML += `<div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none text-sm self-end max-w-[85%] shadow-md">${input.value}</div>`;
+            win.innerHTML += `<div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none text-sm self-end max-w-[85%] shadow-md font-medium">${input.value}</div>`;
             const query = input.value.toLowerCase();
             input.value = '';
             win.scrollTop = win.scrollHeight;
@@ -241,8 +264,8 @@
                 let match = dataFaq.find(f => query.split(' ').some(w => f.q.toLowerCase().includes(w) && w.length > 3));
                 let response = match 
                     ? `Bapak/Ibu Satker, terkait <b>${match.q}</b>, <br><br>👉 <b>Solusinya adalah:</b> <br>${match.solusi.replace(/\n/g, '<br>')}`
-                    : "Mohon maaf Bapak/Ibu, saya tidak menemukan jawaban otomatis. Silakan hubungi CSO KPPN Tobelo via WA/Telepon.";
-                win.innerHTML += `<div class="bg-white border text-gray-800 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm">${response}</div>`;
+                    : "Mohon maaf Bapak/Ibu, saya tidak menemukan jawaban otomatis. Silakan hubungi petugas CSO KPPN Tobelo via WhatsApp.";
+                win.innerHTML += `<div class="bg-white border border-blue-100 text-gray-800 p-3 rounded-2xl rounded-tl-none text-sm self-start max-w-[85%] shadow-sm">${response}</div>`;
                 win.scrollTop = win.scrollHeight;
             }, 600);
         }
@@ -253,12 +276,11 @@
             setTimeout(openMonthlyModal, 1500);
         };
 
-        // PENDAFTARAN SERVICE WORKER (PWA)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => console.log('SW Registered'))
-                    .catch(err => console.log('SW Registration Failed'));
+                    .catch(err => console.log('SW Failed'));
             });
         }
     </script>
