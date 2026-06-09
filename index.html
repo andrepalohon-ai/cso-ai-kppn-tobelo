@@ -116,20 +116,23 @@
         const AGENDA_BULANAN = {
             bulan: "Juni 2026",
             items: [
-                { tgl: "08", tugas: "Batas Akhir Capaian Output Mei" },
                 { tgl: "10", tugas: "Batas Akhir Penyampaian LPJ Bendahara Mei" },
                 { tgl: "15", tugas: "Batas Akhir Penyampaian SPM Gaji Induk Juli 2026" },
-                { tgl: "22", tugas: "Penyampaian SPM PPNPN Induk Mei 2026" }
+                { tgl: "22", tugas: "Pembukaan Penyampaian SPM PPNPN Induk Juni 2026" },
+                { tgl: "26", tugas: "Batas Akhir Penyampaian SPM PPNPN Induk Juni 2026" }
             ]
         };
 
         const dataFaq = [
             { cat: "SAKTI", q: "Kenapa OTP SAKTI tidak kunjung masuk?", a: "Kendala jaringan operator atau nomor belum aktif di SAKTI.", solusi: "1. Restart HP.\n2. Cek masa aktif nomor HP.\n3. Cek pendaftaran nomor di Modul Admin SAKTI pastikan sesuai." },
             { cat: "Pembayaran", q: "Status SPP-SPM: 'Upload NTT'", a: "Berarti PPK sudah selesai melakukan OTP SPP.", solusi: "Operator harus ke menu Cetak SPM dan klik 'Cetak' agar status berubah menjadi 'Setuju SPM'." },
-            { cat: "Pelaporan", q: "Solusi Rekon Gagal?", a: "Terdapat perbedaan data saldo antara SAKTI dan SPAN.", solusi: "Cek detail di MyIntress dan pastikan semua transaksi sudah diposting di Buku Besar SAKTI." },
-            { cat: "Supplier", q: "Supplier Baru berupa rekening baru?", a: "Pastikan Nama dan Nomor Rekening Benar dan Aktif.", solusi: "Mintakan copy rekening untuk amannya serta konfirmasi ke Bank untuk kepastian rekening aktif." },
-            { cat: "Gaji", q: "Batas kirim gaji induk?", a: "Paling lambat tanggal 15 bulan sebelumnya.", solusi: "Selesaikan Rekonsiliasi Gaji Induk sebelum tanggal 10 dan SPM Gaji Induk sebelum tanggal 15 setiap bulannya." },
-            { cat: "SAKTI", q: "Kenapa OTP terblokir", a: "Pemblokiran Sistem dikarenakan 3 kali salah isi OTP atau dikarenakan ada LPJ, Rekon, Capaian Output dan Revisi Halaman III DIPA Belum Selesai.", solusi: "1. Ajukan Permohonan Buka Blokir OTP dengan melampirkan Form Permohonan Buka Blokir ke HAI CSO MyIntress.\n2. Pastikan LPJ/Rekonsiliasi/Capaian Output/Revisi Halaman III DIPA sudah selesai." }
+            { cat: "Pelaporan", q: "Solusi Rekon Gagal?", a: "Terdapat perbedaan data saldo antara SAKTI dan SPAN.", solusi: "Cek detail Rekonsiliasi SAKTI-SPAN di MyIntress dan pastikan semua transaksi sudah direkam SAKTI." },
+            { cat: "Supplier", q: "Supplier Gagal karena Rekening Tidak Aktif?", a: "Rekening supplier yang didaftarkan sudah pasif.", solusi: "Minta supplier memberikan surat keterangan bank terbaru dan lakukan perubahan supplier di SAKTI." },
+            { cat: "Gaji", q: "Batas kirim gaji induk?", a: "Paling lambat tanggal 15 bulan sebelumnya.", solusi: "Selesaikan perubahan data gaji sebelum tanggal 10 dan SPM Gaji Induk sebelum tanggal 15 setiap bulannya." },
+            { cat: "SAKTI", q: "Kenapa OTP terblokir", a: "Pemblokiran Sistem dikarenakan 3 kali salah isi OTP atau dikarenakan ada LPJ, Rekon, Capaian Output dan Revisi Halaman III DIPA Belum Selesai.", solusi: "1. Ajukan Permohonan Buka Blokir OTP dengan melampirkan Form Permohonan Buka Blokir ke HAI CSO MyIntress.\n2. Pastikan LPJ/Rekonsiliasi/Capaian Output/Revisi Halaman III DIPA sudah selesai." },
+            { cat: "Gaji", q: "Rekon gaji induk/susulan/terusan tertolak?", a: "terdapat ketidaksamaan data antara data gaji satker dan data gaji KPPN.", solusi: "cek penolakan gaji pada aplikasi gaji web (gaji.kemenkeu.go.id) pastikan juga semua pegawai baru sudah dikirimkan ke KPPN." },
+            { cat: "Gaji", q: "Rekon Kekurangan Gaji tertolak?", a: "terdapat ketidaksamaan data antara data gaji satker dan data gaji KPPN.", solusi: "cek penolakan gaji pada aplikasi gaji web (gaji.kemenkeu.go.id) pastikan perekaman parameter gaji lama dan gaji baru telah sesuai pada data kekurangan gaji." },
+            { cat: "Gaji", q: "Cetakan Daftar Perubahan Gaji Web tidak muncul BARCODE pada nama PPSPM", a: "Cetakan Daftar Perubahan Gaji wajib direquest cetak setelah proses validasi gaji oleh PPSPM.", solusi: "Pastikan nomor gaji telah divalidasi PPSPM setelah itu lakukan request ulang cetak Cetakan Daftar Perubahan Gaji Web." }
         ];
 
         // 2. FUNGSI GOOGLE CALENDAR
